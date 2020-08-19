@@ -5,8 +5,8 @@ services:
       image: lucifer8591/rabbitmq-server:3.7.17
       hostname: rabbit1
       ports:
-        - "5672:5672"
-        - "15672:15672"
+        - "5672"
+        - "15672"
       environment:
         - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-admin}
         - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-admin}
@@ -21,8 +21,8 @@ services:
         - CLUSTER_WITH=rabbit1
         - RAM_NODE=true
       ports:
-        - "5673:5672"
-        - "15673:15672"
+        - "5672"
+        - "15672"
 
     rabbit3:
       image: lucifer8591/rabbitmq-server:3.7.17
@@ -34,7 +34,19 @@ services:
         - CLUSTERED=true
         - CLUSTER_WITH=rabbit1
       ports:
-        - "5674:5672"
+        - "5672"
+
+    haproxy:
+      image: haproxy:1.7
+      volumes:
+        - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+      depends_on:
+        - rabbit1
+        - rabbit2
+        - rabbit3
+      ports:
+        - 15672:15672
+        - 5672:5672
 
     mongo-datalake:
         image: "mongo:4"

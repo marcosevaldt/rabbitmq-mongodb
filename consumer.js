@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const open = require('amqplib').connect('amqp://admin:admin@rabbit1');
+const open = require('amqplib').connect('amqp://admin:admin@haproxy:5672');
 const queue = 'tasks';
 const MongoClient = require('mongodb').MongoClient;
 let database;
