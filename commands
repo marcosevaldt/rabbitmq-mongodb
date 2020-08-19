@@ -1,2 +1,5 @@
 # NPM INSTALL SCRIPT
 docker run -it --rm -v "$PWD":/usr/src/app -w /usr/src/app node:8 npm install
+
+# BENCHMARK
+ab -n 10000 -c 500 -m POST http://0.0.0.0:80/produce

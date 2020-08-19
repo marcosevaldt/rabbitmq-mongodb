@@ -9,8 +9,11 @@ app.post('/produce', function (req, res) {
     return conn.createChannel();
   }).then(function(ch) {
     return ch.assertQueue(queue, { durable: true }).then(function(ok) {
-      console.log(new Date(), " -- INSERINDO NA FILA....");
-      return ch.sendToQueue(queue, Buffer.from('something'), { persistent: true });
+      let msg = 'something';
+      let date = new Date();
+      ch.sendToQueue(queue, Buffer.from(msg), { persistent: true });
+      console.log(" [x] '%s' Sent '%s'", date, msg);
+      return ch.close();
     });
   }).catch(console.warn);
 
@@ -18,4 +21,3 @@ app.post('/produce', function (req, res) {
 })
  
 app.listen(process.env.NODE_PORT);
-console.log(new Date(), " -- PRODUCER....");

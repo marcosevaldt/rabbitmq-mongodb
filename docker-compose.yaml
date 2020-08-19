@@ -31,7 +31,7 @@ services:
     producer:
         image: "node:8"
         ports:
-            - "80:3000"
+            - "3000"
         command: "npm run producer"
         working_dir: "/usr/src/app"
         volumes:

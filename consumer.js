@@ -20,12 +20,12 @@ MongoClient.connect(databaseConfiguration.url, databaseConfiguration.options, da
 open.then(function(conn) {
   return conn.createChannel();
 }).then(function(ch) {
-  //ch.prefetch(1);
+  ch.prefetch(1);
   return ch.assertQueue(queue, { durable: true }).then(function(ok) {
     return ch.consume(queue, async function(msg) {
       if (msg !== null) {
         const created = await database.collection('producer').insertOne({ data: msg.content.toString() });
-        console.log(new Date(), " -- CRIANDO NO BANCO....", created.insertedId);
+        console.log(" [x] Created '%s'", created.insertedId);
         ch.ack(msg);
       }
     }, { noAck: false });
@@ -33,4 +33,3 @@ open.then(function(conn) {
 }).catch(console.warn);
 
 app.listen(process.env.NODE_PORT);
-console.log(new Date(), " -- CONSUMER....");
