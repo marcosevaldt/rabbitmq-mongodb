@@ -1,0 +1,25 @@
+{
+  "name": "mongodb-replication",
+  "version": "1.0.0",
+  "description": "MongoDB Replication Cluster",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "consumer": "nodemon consumer.js",
+    "producer": "nodemon producer.js"
+  },
+  "keywords": [
+    "mongodb",
+    "replica-set",
+    "cluster",
+    "replication"
+  ],
+  "author": "Marcos Evaldt Ereno",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.6.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.6.0",
+    "nodemon": "^2.0.4"
+  }
+}
