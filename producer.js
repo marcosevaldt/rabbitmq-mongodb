@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const open = require('amqplib').connect('amqp://rabbit');
+const open = require('amqplib').connect('amqp://admin:admin@rabbit1');
 const queue = 'tasks';
 
 
