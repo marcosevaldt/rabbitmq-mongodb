@@ -16,7 +16,7 @@ const databaseConfiguration = {
 
 // Use connect method to connect to the server
 MongoClient.connect(databaseConfiguration.url, databaseConfiguration.options, databaseConfiguration.callback);
- 
+
 open.then(function(conn) {
   return conn.createChannel();
 }).then(function(ch) {
@@ -24,8 +24,17 @@ open.then(function(conn) {
   return ch.assertQueue(queue, { durable: true }).then(function(ok) {
     return ch.consume(queue, async function(msg) {
       if (msg !== null) {
-        const created = await database.collection('producer').insertOne({ data: msg.content.toString() });
-        console.log(" [x] Created '%s'", created.insertedId);
+
+        const message = JSON.parse(msg.content.toString())
+
+        console.log('--->',  message)
+        const created = await database.collection(message.api).insertOne(
+          {
+            ...message,
+            consumedAt: new Date(),
+          }
+        );
+
         ch.ack(msg);
       }
     }, { noAck: false });
