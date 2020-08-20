@@ -11,7 +11,10 @@ app.post('/produce', jsonParser, (req, res) =>  {
     return conn.createChannel();
   }).then(ch => {
     return ch.assertQueue(queue, { durable: true }).then(ok => {
-      const msg = req.body;
+      const dateNow = new Date();
+      const producedAt = dateNow.toISOString();
+
+      const msg = { ...req.body, producedAt };
 
       const msgString = JSON.stringify(msg);
 
