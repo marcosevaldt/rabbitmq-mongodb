@@ -14,7 +14,21 @@ app.post('/produce', jsonParser, (req, res) =>  {
       const dateNow = new Date();
       const producedAt = dateNow.toISOString();
 
-      const msg = { ...req.body, producedAt };
+      let msg = { ...req.body, producedAt };
+
+      if (Object.keys(req.body).length === 0) {
+        msg = {
+          ...msg,
+          api: 'users',
+          method: 'insert',
+          data: {
+            _id: 'uuid',
+            phoneNumber: '+55 (51) 12345-1234',
+            email: 't@t.com.br',
+            name: 'Testinho Da Silva'
+          }
+        }
+      }
 
       const msgString = JSON.stringify(msg);
 
