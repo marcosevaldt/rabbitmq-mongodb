@@ -34,7 +34,7 @@ open.then(conn => {
         const dateNow = new Date();
         const consumedAt = dateNow.toISOString();
 
-        const created = await database.collection(message.api).insertOne(
+        const created = await database.collection('lake').insertOne(
           {
             ...message,
             consumedAt,
