@@ -1,86 +1,55 @@
 version: '3'
 services:
 
-    rabbit1:
-      image: lucifer8591/rabbitmq-server:3.7.17
-      hostname: rabbit1
-      ports:
-        - "5672"
-        - "15672"
-      environment:
-        - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER:-admin}
-        - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS:-admin}
-
-    rabbit2:
-      image: lucifer8591/rabbitmq-server:3.7.17
-      hostname: rabbit2
-      links:
-        - rabbit1
-      environment:
-        - CLUSTERED=true
-        - CLUSTER_WITH=rabbit1
-        - RAM_NODE=true
-      ports:
-        - "5672"
-        - "15672"
-
-    rabbit3:
-      image: lucifer8591/rabbitmq-server:3.7.17
-      hostname: rabbit3
-      links:
-        - rabbit1
-        - rabbit2
-      environment:
-        - CLUSTERED=true
-        - CLUSTER_WITH=rabbit1
-      ports:
-        - "5672"
-
-    haproxy:
-      image: haproxy:1.7
-      volumes:
-        - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
-      depends_on:
-        - rabbit1
-        - rabbit2
-        - rabbit3
-      ports:
-        - 15672:15672
-        - 5672:5672
+    rabbit:
+        image: "rabbitmq:3.8-management"
+        ports:
+          - "5672"
+          - "15672"
 
     mongo-datalake:
         image: "mongo:4"
         ports:
-            - "27017:27017"
+            - "27017"
         environment:
           MONGO_INITDB_DATABASE: "mongo-datalake"
 
-    consumer:
-        image: "node:8"
-        ports:
-            - "3000"
-        command: "npm run consumer"
-        working_dir: "/usr/src/app"
-        volumes:
-            - "./:/usr/src/app"
+    haproxy:
+        image: "eeacms/haproxy"
         depends_on:
-            - "rabbit1"
-            - "rabbit2"
-            - "rabbit3"
+        - "producer"
+        ports:
+        - "80:5000"
+        - "1936:1936"
         environment:
-          NODE_PORT: "3000"
+          BACKENDS: "producer"
+          DNS_ENABLED: "true"
+          LOG_LEVEL: "info"
+          STATS_PORT: 1936
+          BACKENDS_PORT: 80
 
     producer:
         image: "node:8"
-        ports:
-            - "3000"
-        command: "npm run producer"
         working_dir: "/usr/src/app"
+        command: "npm run producer"
         volumes:
             - "./:/usr/src/app"
         depends_on:
-            - "rabbit1"
-            - "rabbit2"
-            - "rabbit3"
+            - "rabbit"
+        ports:
+            - "80"
         environment:
-          NODE_PORT: "3000"
+          NODE_PORT: "80"
+
+    consumer:
+        image: "node:8"
+        working_dir: "/usr/src/app"
+        command: "npm run consumer"
+        volumes:
+            - "./:/usr/src/app"
+        depends_on:
+            - "rabbit"
+        ports:
+            - "80"
+        environment:
+          NODE_PORT: "80"

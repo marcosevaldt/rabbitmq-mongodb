@@ -2,9 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const app = express();
-const open = require('amqplib').connect('amqp://admin:admin@haproxy:5672');
+const open = require('amqplib').connect('amqp://guest:guest@rabbit:5672');
 const queue = 'tasks';
 
+app.get('/', jsonParser, (req, res) =>  {
+  res.send('Hello World!');
+});
 
 app.post('/produce', jsonParser, (req, res) =>  {
   open.then(conn => {
@@ -39,6 +42,6 @@ app.post('/produce', jsonParser, (req, res) =>  {
   }).catch(console.warn);
 
   res.send({});
-})
+});
 
 app.listen(process.env.NODE_PORT);
