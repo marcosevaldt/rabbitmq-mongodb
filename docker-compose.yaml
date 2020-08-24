@@ -25,8 +25,8 @@ services:
           BACKENDS: "producer"
           DNS_ENABLED: "true"
           LOG_LEVEL: "info"
-          STATS_PORT: 1936
-          BACKENDS_PORT: 80
+          STATS_PORT: "1936"
+          BACKENDS_PORT: "80"
 
     producer:
         image: "node:8"
